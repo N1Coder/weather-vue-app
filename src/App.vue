@@ -1,81 +1,96 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
   <main>
-    <TheWelcome />
+
+    <section class="search-box">
+      <h1> weather city app demo </h1>
+      <input
+        class="search-bar"
+        type="text"
+        placeholder="Search..."
+        v-model="query"
+        @keypress="fetchWeather"
+      />
+    </section>
+
+    <section class="weather-content" v-if="typeof weather.main !== 'undefined'">
+      <div class="location-info">
+        <div class="location">
+          {{ weather.name }}, {{ weather.sys.country }}
+        </div>
+        <div class="date">{{ dateBuild() }}</div>
+      </div>
+
+      <div class="weather-info">
+        <div class="temp">{{ Math.round(weather.main.temp) }}°C</div>
+        <div class="weather">{{ weather.weather[0].main }}</div>
+      </div>
+    </section>
   </main>
 </template>
 
-<style>
-@import './assets/base.css';
+<script>
+export default {
+  data() {
+    return {
+      helloWorld: "Hello World",
+      api_key: "829d73db36ac8df0778b15398b5a06d1",
+      url_base: "http://api.openweathermap.org/data/2.5/",
+      query: "",
+      weather: {},
+    };
+  },
+  methods: {
+    // fetching the API from openweathermap.org
+    // ada dokumentasinya
+    fetchWeather(e) {
+      if (e.key === "Enter") {
+        fetch(
+          `${this.url_base}weather?q=${this.query}&units=metric&appid=${this.api_key}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            this.weather = data;
+          })
+          .catch((error) => console.log(error));
+      }
+    },
+    dateBuild() {
+      let d = new Date();
+      let months = [
+        "Januar",
+        "Februar",
+        "März",
+        "April",
+        "Mai",
+        "Juni",
+        "Juli",
+        "August",
+        "September",
+        "Oktober",
+        "November",
+        "Dezember",
+      ];
+      let days = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jum'at",
+        "Sabtu",
+      ];
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+      let day = days[d.getDay()];
+      let date = d.getDate();
+      let month = months[d.getMonth()];
+      let year = d.getFullYear();
 
-  font-weight: normal;
-}
+      return `${day}, ${date} ${month} ${year}`;
+    },
+  },
+};
+</script>
 
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-}
+<style lang="scss">
+@use "scss/main";
 </style>

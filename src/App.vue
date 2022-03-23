@@ -34,7 +34,7 @@ export default {
     return {
       helloWorld: "Hello World",
       api_key: "829d73db36ac8df0778b15398b5a06d1",
-      url_base: "http://api.openweathermap.org/data/2.5/",
+      url_base: "https://api.openweathermap.org/data/2.5/",
       query: "",
       weather: {},
     };
